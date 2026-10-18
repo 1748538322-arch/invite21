@@ -3,246 +3,290 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#000000">
 <title>灯牌20级 · 荣耀之夜 | 电子邀请函</title>
+<link rel="preload" as="image" href="hero.png">
 <style>
   :root{
-    --bg:#000;
-    --panel:#0b0b0d;
-    --ink:#f5f5f7;
-    --ink-dim:#86868b;
+    --black:#000;
+    --white:#fff;
+    --grey-bg:#f5f5f7;
+    --card-dark:#161617;
+    --ink:#1d1d1f;
+    --ink-inv:#f5f5f7;
+    --dim:#86868b;
+    --dim-inv:#a1a1a6;
     --gold:#d8b26a;
     --gold-2:#f4e3bd;
-    --line:rgba(255,255,255,.12);
+    --hair:rgba(0,0,0,.1);
+    --hair-inv:rgba(255,255,255,.14);
     --font:-apple-system,BlinkMacSystemFont,"SF Pro SC","SF Pro Display","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-  html,body{height:100%}
-  body{
-    background:var(--bg);color:var(--ink);font-family:var(--font);
-    -webkit-font-smoothing:antialiased;overflow:hidden;
-  }
-  /* ---------- 顶栏（苹果式毛玻璃） ---------- */
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--black);color:var(--ink-inv);font-family:var(--font);-webkit-font-smoothing:antialiased;overflow:hidden}
+  img{display:block;max-width:100%}
+
+  /* ===== 顶栏 ===== */
   #topnav{
-    position:fixed;top:0;left:0;right:0;z-index:50;height:52px;
-    display:flex;align-items:center;justify-content:space-between;
-    padding:0 22px;background:rgba(0,0,0,.55);backdrop-filter:saturate(180%) blur(20px);
-    -webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08);
+    position:fixed;top:0;left:0;right:0;z-index:50;height:48px;
+    display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+    background:rgba(0,0,0,.72);backdrop-filter:saturate(180%) blur(18px);-webkit-backdrop-filter:saturate(180%) blur(18px);
   }
-  #topnav .brand{font-size:13px;letter-spacing:.35em;color:var(--ink-dim);font-weight:600}
+  #topnav .brand{font-size:12px;letter-spacing:.28em;color:var(--dim-inv);font-weight:600}
+  .nav-r{display:flex;align-items:center;gap:10px}
+  .room-chip{
+    font-size:11px;letter-spacing:.08em;color:var(--gold-2);
+    border:1px solid rgba(216,178,106,.45);border-radius:999px;padding:4px 12px;white-space:nowrap;
+  }
   #musicBtn{
-    width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
-    background:rgba(255,255,255,.06);color:var(--ink);font-size:15px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;transition:.3s;
+    width:32px;height:32px;border-radius:50%;border:1px solid var(--hair-inv);
+    background:rgba(255,255,255,.08);color:var(--ink-inv);font-size:14px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:transform .2s;
   }
-  #musicBtn.playing{border-color:var(--gold);color:var(--gold);animation:spin 6s linear infinite}
-  @keyframes spin{to{transform:rotate(360deg)}}
-  /* ---------- 页面滚动结构 ---------- */
-  #scroller{height:100dvh;overflow-y:auto;scroll-snap-type:y proximity;scroll-behavior:smooth}
+  #musicBtn:active{transform:scale(.9)}
+  #musicBtn.playing{border-color:var(--gold);color:var(--gold)}
+  #musicBtn.playing::after{content:"";position:absolute;width:32px;height:32px;border-radius:50%;border:1px solid rgba(216,178,106,.5);animation:pulse 1.8s ease-out infinite}
+  @keyframes pulse{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.7);opacity:0}}
+
+  /* ===== 滚动结构 ===== */
+  #scroller{height:100dvh;overflow-y:auto;scroll-snap-type:y proximity;scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
   #scroller::-webkit-scrollbar{width:0}
-  .page{
-    min-height:100dvh;scroll-snap-align:start;position:relative;
-    display:flex;align-items:center;justify-content:center;padding:80px 24px 60px;
-  }
-  .inner{width:100%;max-width:760px;text-align:center;opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+  .page{min-height:100dvh;scroll-snap-align:start;position:relative;display:flex;align-items:center;justify-content:center;padding:76px 22px 56px}
+  .inner{width:100%;max-width:820px;text-align:center;opacity:0;transform:translateY(26px) scale(.985);transition:opacity .8s cubic-bezier(.22,.61,.36,1),transform .8s cubic-bezier(.22,.61,.36,1);will-change:opacity,transform}
   .page.in-view .inner{opacity:1;transform:none}
-  /* ---------- 封面海报 ---------- */
+  .dark{background:var(--black);color:var(--ink-inv)}
+  .light{background:var(--white);color:var(--ink)}
+
+  /* ===== 排版（Apple 式） ===== */
+  .kicker{font-size:13px;font-weight:600;letter-spacing:.42em;text-indent:.42em;color:var(--gold);margin-bottom:14px}
+  .h-hero{font-size:clamp(44px,11vw,96px);font-weight:700;letter-spacing:-.025em;line-height:1.05}
+  .h-sec{font-size:clamp(32px,7.5vw,64px);font-weight:700;letter-spacing:-.02em;line-height:1.1;margin-bottom:18px}
+  .sub{font-size:clamp(16px,4vw,24px);font-weight:400;color:var(--dim-inv);letter-spacing:.02em;margin-top:14px;line-height:1.6}
+  .light .sub{color:var(--dim)}
+  .cta-row{display:flex;gap:14px;justify-content:center;margin-top:34px;flex-wrap:wrap}
+  .pill{
+    display:inline-block;padding:12px 26px;border-radius:999px;font-size:15px;font-weight:500;cursor:pointer;
+    background:var(--gold);color:#1d1d1f;border:none;text-decoration:none;transition:transform .15s;font-family:var(--font);
+  }
+  .pill:active{transform:scale(.96)}
+  .pill.ghost{background:transparent;color:var(--gold-2);border:1px solid rgba(216,178,106,.55)}
+  .light .pill.ghost{color:var(--ink);border-color:rgba(0,0,0,.25)}
+  .textlink{display:inline-block;margin-top:22px;font-size:15px;color:var(--gold);text-decoration:none;letter-spacing:.02em}
+  .textlink::after{content:" ›"}
+
+  /* ===== 封面 ===== */
   #p-hero{padding:0;overflow:hidden}
-  #p-hero .hero-bg{
-    position:absolute;inset:0;background:url("hero.png") center/cover no-repeat;
+  .hero-bg{position:absolute;inset:0;background:url("hero.png") center/cover no-repeat}
+  .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35),rgba(0,0,0,0) 45%,rgba(0,0,0,.9))}
+  #p-hero .inner{position:relative;z-index:2;padding:0 22px}
+  .hero-date{margin-top:26px;font-size:14px;letter-spacing:.22em;color:var(--dim-inv)}
+  .scroll-hint{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);z-index:2;font-size:11px;letter-spacing:.3em;color:var(--dim-inv);animation:float 2.6s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,7px)}}
+
+  /* ===== 嘉宾卡片 ===== */
+  .people{display:flex;justify-content:center;align-items:stretch;gap:clamp(16px,4vw,34px);flex-wrap:wrap;margin-top:8px}
+  .person{
+    width:min(42vw,280px);background:var(--card-dark);border:1px solid var(--hair-inv);
+    border-radius:28px;padding:34px 20px 30px;
   }
-  #p-hero .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.05) 40%,rgba(0,0,0,.85))}
-  #p-hero .inner{position:relative;z-index:2;max-width:680px;padding:0 24px}
-  .kicker{font-size:13px;letter-spacing:.5em;color:var(--gold);font-weight:600;margin-bottom:18px;text-indent:.5em}
-  .big-num{
-    font-size:clamp(96px,22vw,190px);font-weight:700;line-height:1;letter-spacing:-.02em;
-    background:linear-gradient(180deg,var(--gold-2),var(--gold) 60%,#8a6a33);
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 6px 30px rgba(216,178,106,.25));
+  .avatar-wrap{position:relative;width:min(34vw,150px);aspect-ratio:1;margin:0 auto}
+  .avatar-wrap::before{content:"";position:absolute;inset:-5px;border-radius:50%;border:1.5px solid rgba(216,178,106,.65)}
+  .avatar{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#222}
+  .p-name{margin-top:20px;font-size:clamp(19px,4.6vw,24px);font-weight:600;letter-spacing:.04em}
+  .p-role{margin-top:8px;font-size:13px;color:var(--dim-inv);letter-spacing:.12em;line-height:1.7}
+  .room-badge{
+    display:inline-flex;align-items:center;gap:10px;margin-top:30px;
+    background:var(--card-dark);border:1px solid var(--hair-inv);border-radius:999px;padding:8px 20px 8px 8px;
   }
-  .hero-title{font-size:clamp(26px,6vw,44px);font-weight:600;letter-spacing:.12em;margin-top:14px}
-  .hero-sub{margin-top:14px;font-size:clamp(14px,3.4vw,17px);color:var(--ink-dim);letter-spacing:.3em;text-indent:.3em}
-  .hero-date{
-    display:inline-block;margin-top:34px;padding:10px 26px;border:1px solid rgba(216,178,106,.5);
-    border-radius:999px;font-size:14px;letter-spacing:.18em;color:var(--gold-2);
+  .room-badge img{width:38px;height:38px;border-radius:50%;object-fit:cover}
+  .room-badge span{font-size:13px;color:var(--dim-inv);letter-spacing:.06em}
+  .room-badge b{color:var(--gold-2);font-weight:600}
+
+  /* ===== 信息表（Apple 规格表式） ===== */
+  .spec{max-width:640px;margin:0 auto;text-align:left}
+  .spec-row{display:flex;gap:20px;padding:18px 4px;border-bottom:1px solid var(--hair);font-size:clamp(15px,3.8vw,17px)}
+  .spec-row:last-child{border-bottom:none}
+  .spec-k{flex:0 0 64px;color:var(--dim);font-weight:500}
+  .spec-v{color:var(--ink);line-height:1.8;font-weight:500}
+
+  /* ===== 画廊（横向滑动） ===== */
+  .gallery{
+    display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+    padding:6px 22px 18px;margin-top:6px;scrollbar-width:none;
   }
-  .scroll-hint{
-    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
-    font-size:12px;letter-spacing:.3em;color:var(--ink-dim);animation:float 2.4s ease-in-out infinite;
-  }
-  @keyframes float{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
-  /* ---------- 通用排版 ---------- */
-  .sec-kicker{font-size:12px;letter-spacing:.5em;color:var(--gold);font-weight:600;margin-bottom:16px;text-indent:.5em}
-  .sec-title{font-size:clamp(28px,6.5vw,46px);font-weight:600;letter-spacing:.06em;margin-bottom:26px}
-  .letter{font-size:clamp(15px,3.8vw,18px);line-height:2.1;color:#d2d2d7;text-align:justify;text-align-last:center}
-  .letter b{color:var(--gold-2);font-weight:600}
-  .divider{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:30px auto}
-  /* ---------- 嘉宾 ---------- */
-  .people{display:flex;justify-content:center;gap:clamp(30px,9vw,90px);flex-wrap:wrap}
-  .person{width:min(40vw,220px)}
-  .avatar-wrap{position:relative;width:min(40vw,180px);aspect-ratio:1;margin:0 auto}
-  .avatar-wrap::before{
-    content:"";position:absolute;inset:-6px;border-radius:50%;
-    background:conic-gradient(from 0deg,var(--gold),transparent 30%,var(--gold) 55%,transparent 85%,var(--gold));
-    opacity:.7;animation:spin 9s linear infinite;
-  }
-  .avatar{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#111;display:block}
-  .p-name{margin-top:20px;font-size:clamp(18px,4.5vw,22px);font-weight:600;letter-spacing:.1em}
-  .p-role{margin-top:8px;font-size:13px;color:var(--ink-dim);letter-spacing:.2em}
-  .amp{align-self:center;font-size:clamp(24px,6vw,36px);color:var(--gold);font-weight:300;font-style:italic}
-  /* ---------- 活动信息 ---------- */
-  .info-card{
-    background:var(--panel);border:1px solid var(--line);border-radius:24px;
-    padding:clamp(26px,6vw,44px);text-align:left;
-  }
-  .info-row{display:flex;gap:18px;padding:16px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:clamp(14px,3.6vw,16px)}
-  .info-row:last-child{border-bottom:none}
-  .info-k{flex:0 0 74px;color:var(--gold);letter-spacing:.2em;font-weight:600}
-  .info-v{color:#d2d2d7;line-height:1.8}
-  /* ---------- 收款码 ---------- */
-  .pay-card{
-    display:inline-block;background:#fff;border-radius:24px;padding:clamp(20px,5vw,32px);
-    box-shadow:0 20px 60px rgba(0,0,0,.6);
-  }
-  .pay-card img{width:min(64vw,260px);border-radius:12px;display:block}
-  .pay-note{margin-top:22px;font-size:13px;color:var(--ink-dim);letter-spacing:.2em}
-  /* ---------- 结尾 ---------- */
-  .end-line{font-size:clamp(24px,6vw,40px);font-weight:600;letter-spacing:.2em;line-height:1.8}
-  .end-sign{margin-top:28px;font-size:14px;color:var(--ink-dim);letter-spacing:.25em;line-height:2.2}
-  /* ---------- 侧边圆点导航 ---------- */
-  #dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:12px}
-  #dots button{width:7px;height:7px;border-radius:50%;border:none;background:rgba(255,255,255,.25);cursor:pointer;padding:0;transition:.3s}
-  #dots button.on{background:var(--gold);transform:scale(1.5)}
-  /* ---------- 编辑系统 ---------- */
+  .gallery::-webkit-scrollbar{display:none}
+  .g-card{flex:0 0 min(74vw,340px);scroll-snap-align:center}
+  .g-card img{width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:22px;background:#222}
+  .g-cap{margin-top:12px;font-size:13px;color:var(--dim-inv);letter-spacing:.14em}
+
+  /* ===== 收款码 ===== */
+  .pay-card{display:inline-block;background:#fff;border-radius:26px;padding:clamp(18px,4.6vw,30px);box-shadow:0 16px 48px rgba(0,0,0,.14)}
+  .pay-card img{width:min(60vw,250px);border-radius:12px}
+  .pay-note{margin-top:20px;font-size:13px;color:var(--dim);letter-spacing:.16em}
+
+  /* ===== 结尾 ===== */
+  .end-line{font-size:clamp(30px,7.5vw,60px);font-weight:700;letter-spacing:.06em;line-height:1.5}
+  .end-sign{margin-top:26px;font-size:14px;color:var(--dim-inv);letter-spacing:.2em;line-height:2.2}
+
+  /* ===== 圆点导航 ===== */
+  #dots{position:fixed;right:12px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:11px}
+  #dots button{width:6px;height:6px;border-radius:50%;border:none;background:rgba(134,134,139,.4);cursor:pointer;padding:0;transition:transform .25s,background .25s}
+  #dots button.on{background:var(--gold);transform:scale(1.6)}
+
+  /* ===== 编辑系统 ===== */
   #editBtn{
-    position:fixed;right:18px;bottom:22px;z-index:60;height:40px;padding:0 20px;border-radius:999px;
-    border:1px solid var(--line);background:rgba(20,20,22,.8);backdrop-filter:blur(12px);
-    color:var(--ink);font-size:14px;letter-spacing:.15em;cursor:pointer;font-family:var(--font);
+    position:fixed;right:16px;bottom:20px;z-index:60;height:38px;padding:0 18px;border-radius:999px;
+    border:1px solid var(--hair-inv);background:rgba(22,22,23,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+    color:var(--ink-inv);font-size:13px;letter-spacing:.12em;cursor:pointer;font-family:var(--font);
   }
   #editBar{
     position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;
-    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
-    background:rgba(12,12,14,.92);backdrop-filter:blur(20px);border-top:1px solid var(--line);
-    gap:8px;flex-wrap:wrap;justify-content:center;
+    padding:12px 14px calc(12px + env(safe-area-inset-bottom));
+    background:rgba(12,12,14,.94);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+    border-top:1px solid var(--hair-inv);gap:8px;flex-wrap:wrap;justify-content:center;
   }
   body.editing #editBar{display:flex}
-  body.editing #editBtn{bottom:auto;top:62px}
-  #editBar button{
-    height:36px;padding:0 16px;border-radius:999px;border:1px solid var(--line);
-    background:rgba(255,255,255,.07);color:var(--ink);font-size:13px;cursor:pointer;font-family:var(--font);
-  }
+  body.editing #editBtn{display:none}
+  #editBar button{height:34px;padding:0 14px;border-radius:999px;border:1px solid var(--hair-inv);background:rgba(255,255,255,.07);color:var(--ink-inv);font-size:12px;cursor:pointer;font-family:var(--font)}
   #editBar button.primary{border-color:var(--gold);color:var(--gold)}
-  body.editing [data-edit]{outline:1px dashed rgba(216,178,106,.45);outline-offset:4px;border-radius:4px;cursor:text}
-  body.editing [data-edit]:focus{outline:1px solid var(--gold);background:rgba(216,178,106,.06)}
+  body.editing [data-edit]{outline:1px dashed rgba(216,178,106,.5);outline-offset:4px;border-radius:4px;cursor:text}
+  body.editing [data-edit]:focus{outline:1px solid var(--gold);background:rgba(216,178,106,.07)}
   #editTip{
-    position:fixed;top:62px;left:50%;transform:translateX(-50%);z-index:60;display:none;
-    background:rgba(216,178,106,.14);border:1px solid rgba(216,178,106,.4);color:var(--gold-2);
-    font-size:12px;letter-spacing:.1em;padding:8px 18px;border-radius:999px;backdrop-filter:blur(10px);
-    max-width:86vw;text-align:center;
+    position:fixed;top:58px;left:50%;transform:translateX(-50%);z-index:60;display:none;
+    background:rgba(216,178,106,.15);border:1px solid rgba(216,178,106,.4);color:var(--gold-2);
+    font-size:12px;letter-spacing:.08em;padding:7px 16px;border-radius:999px;max-width:88vw;text-align:center;
   }
   body.editing #editTip{display:block}
-  @media (max-width:520px){ #dots{right:8px} }
+  @media (max-width:520px){ #dots{right:7px} .room-chip{display:none} }
+  @media (prefers-reduced-motion:reduce){
+    .inner{transition:none;opacity:1;transform:none}
+    .scroll-hint,#musicBtn.playing::after{animation:none}
+  }
 </style>
 </head>
 <body>
 
 <nav id="topnav">
-  <div class="brand">GLORY&nbsp;NIGHT&nbsp;·&nbsp;20</div>
-  <button id="musicBtn" title="播放 / 暂停音乐">♪</button>
+  <div class="brand">GLORY NIGHT · 20</div>
+  <div class="nav-r">
+    <span class="room-chip" data-edit id="t-room-chip">抖音直播间 23430906086</span>
+    <button id="musicBtn" title="播放 / 暂停音乐">♪</button>
+  </div>
 </nav>
 
 <main id="scroller">
 
-  <!-- 1 封面海报 -->
-  <section class="page" id="p-hero">
+  <!-- 1 封面 -->
+  <section class="page dark" id="p-hero">
     <div class="hero-bg" data-img="hero"></div>
     <div class="inner">
       <div class="kicker" data-edit id="t-kicker">抖音直播 · 粉丝灯牌</div>
-      <div class="big-num" data-edit id="t-num">20</div>
-      <h1 class="hero-title" data-edit id="t-title">荣耀之夜 · 庆功邀请函</h1>
-      <p class="hero-sub" data-edit id="t-sub">一路相伴 · 星光为证</p>
-      <div><span class="hero-date" data-edit id="t-date">2026年10月24日 20:00</span></div>
+      <h1 class="h-hero" data-edit id="t-num">20 级</h1>
+      <div class="h-sec" style="margin-top:6px" data-edit id="t-title">荣耀之夜</div>
+      <p class="sub" data-edit id="t-sub">一路相伴，星光为证。</p>
+      <div class="cta-row">
+        <button class="pill" data-goto="p-info">查看活动流程</button>
+        <button class="pill ghost" data-goto="p-pay">心意通道</button>
+      </div>
+      <div class="hero-date" data-edit id="t-date">2026年10月24日 20:00</div>
     </div>
     <div class="scroll-hint">上滑开启</div>
   </section>
 
   <!-- 2 邀请函 -->
-  <section class="page" id="p-letter">
+  <section class="page light" id="p-letter">
     <div class="inner">
-      <div class="sec-kicker">INVITATION</div>
-      <h2 class="sec-title" data-edit id="t-letter-title">诚邀见证</h2>
-      <p class="letter" data-edit id="t-letter">从直播间里第一次点亮灯牌，到今夜数字停格在 <b>20</b>。<br>
-      每一级灯牌，都是一次准时的守候、一句没说出口的陪伴。<br>
-      大哥与主播，屏幕两端，彼此成全。<br>
-      值此灯牌升至 20 级之际，特设庆功之夜，<br>
-      诚邀各位家人朋友，共同见证这份荣耀时刻。</p>
-      <div class="divider"></div>
+      <div class="kicker" style="color:#b08d4f">INVITATION</div>
+      <h2 class="h-sec" data-edit id="t-letter-title">诚邀见证。</h2>
+      <p class="sub" style="max-width:620px;margin:0 auto;line-height:2" data-edit id="t-letter">从直播间里第一次点亮灯牌，到今夜数字停格在 20。<br>每一级灯牌，都是一次准时的守候、一句没说出口的陪伴。<br>大哥与主播，屏幕两端，彼此成全。<br>值此灯牌升至 20 级之际，特设庆功之夜，<br>诚邀各位家人朋友，共同见证这份荣耀时刻。</p>
+      <a class="textlink" href="javascript:void(0)" data-goto="p-people">认识今晚的主角</a>
     </div>
   </section>
 
-  <!-- 3 嘉宾 -->
-  <section class="page" id="p-people">
+  <!-- 3 主角 -->
+  <section class="page dark" id="p-people">
     <div class="inner">
-      <div class="sec-kicker">TONIGHT'S STARS</div>
-      <h2 class="sec-title">今晚的主角</h2>
+      <div class="kicker">TONIGHT'S STARS</div>
+      <h2 class="h-sec">今晚的主角</h2>
       <div class="people">
         <div class="person">
-          <div class="avatar-wrap"><img class="avatar" data-img="male" src="male.jpg" alt="男嘉宾"></div>
+          <div class="avatar-wrap"><img class="avatar" data-img="male" src="male.jpg" alt="男嘉宾" loading="lazy" decoding="async"></div>
           <div class="p-name" data-edit id="t-male-name">男嘉宾</div>
-          <div class="p-role" data-edit id="t-male-role">直播间首席守护 · 灯牌20级</div>
+          <div class="p-role" data-edit id="t-male-role">直播间首席守护<br>粉丝灯牌 20 级</div>
         </div>
-        <div class="amp">&amp;</div>
         <div class="person">
-          <div class="avatar-wrap"><img class="avatar" data-img="female" src="female.jpg" alt="女嘉宾"></div>
-          <div class="p-name" data-edit id="t-female-name">女嘉宾</div>
-          <div class="p-role" data-edit id="t-female-role">抖音主播</div>
+          <div class="avatar-wrap"><img class="avatar" data-img="female" src="female.jpg" alt="女嘉宾" loading="lazy" decoding="async"></div>
+          <div class="p-name" data-edit id="t-female-name">哇哦 wao</div>
+          <div class="p-role" data-edit id="t-female-role">抖音主播<br>本场荣耀之约</div>
         </div>
+      </div>
+      <div class="room-badge">
+        <img data-img="roomavatar" src="room-avatar.jpg" alt="直播间头像" loading="lazy" decoding="async">
+        <span data-edit id="t-room-line">直播间 <b>23430906086</b> · 家人团集结</span>
       </div>
     </div>
   </section>
 
   <!-- 4 活动信息 -->
-  <section class="page" id="p-info">
+  <section class="page light" id="p-info">
     <div class="inner">
-      <div class="sec-kicker">DETAILS</div>
-      <h2 class="sec-title">活动信息</h2>
-      <div class="info-card">
-        <div class="info-row"><div class="info-k">时间</div><div class="info-v" data-edit id="t-i-time">2026年10月24日（周六）20:00 — 23:00</div></div>
-        <div class="info-row"><div class="info-k">地点</div><div class="info-v" data-edit id="t-i-place">抖音直播间 · 房间号 0000000</div></div>
-        <div class="info-row"><div class="info-k">流程</div><div class="info-v" data-edit id="t-i-flow">20:00 开场暖场<br>20:30 灯牌20级点亮仪式<br>21:00 连麦互动 · 才艺环节<br>22:00 抽奖与答谢<br>22:40 合影留念 · 圆满收官</div></div>
-        <div class="info-row"><div class="info-k">备注</div><div class="info-v" data-edit id="t-i-note">线上活动，点击进入直播间即可参与；欢迎转发邀请更多家人。</div></div>
+      <div class="kicker" style="color:#b08d4f">DETAILS</div>
+      <h2 class="h-sec">活动信息</h2>
+      <div class="spec">
+        <div class="spec-row"><div class="spec-k">时间</div><div class="spec-v" data-edit id="t-i-time">2026年10月24日（周六）20:00 — 23:00</div></div>
+        <div class="spec-row"><div class="spec-k">地点</div><div class="spec-v" data-edit id="t-i-place">抖音直播间 · 房间号 23430906086</div></div>
+        <div class="spec-row"><div class="spec-k">流程</div><div class="spec-v" data-edit id="t-i-flow">20:00 开场暖场<br>20:30 灯牌 20 级点亮仪式<br>21:00 连麦互动 · 才艺环节<br>22:00 抽奖与答谢<br>22:40 合影留念 · 圆满收官</div></div>
+        <div class="spec-row"><div class="spec-k">备注</div><div class="spec-v" data-edit id="t-i-note">线上活动，进入直播间即可参与；欢迎转发邀请更多家人。</div></div>
       </div>
     </div>
   </section>
 
-  <!-- 5 收款码 -->
-  <section class="page" id="p-pay">
+  <!-- 5 主播瞬间 -->
+  <section class="page dark" id="p-gallery" style="display:block;padding-top:96px">
     <div class="inner">
-      <div class="sec-kicker">SUPPORT</div>
-      <h2 class="sec-title" data-edit id="t-pay-title">心意通道</h2>
-      <div class="pay-card"><img data-img="qr" src="pay-wechat.jpg" alt="微信收款码"></div>
+      <div class="kicker">MOMENTS</div>
+      <h2 class="h-sec">主播瞬间</h2>
+      <p class="sub" style="margin-bottom:26px">屏幕里外的她，左右滑动查看。</p>
+    </div>
+    <div class="gallery" style="position:relative;z-index:2">
+      <figure class="g-card"><img data-img="live1" src="live1.jpg" alt="直播现场" loading="lazy" decoding="async"><figcaption class="g-cap" data-edit id="t-g1">直播现场 · 陪伴的每一晚</figcaption></figure>
+      <figure class="g-card"><img data-img="live2" src="live2.jpg" alt="生活照" loading="lazy" decoding="async"><figcaption class="g-cap" data-edit id="t-g2">屏幕之外 · 生活的她</figcaption></figure>
+      <figure class="g-card"><img data-img="female2" src="female.jpg" alt="主播" loading="lazy" decoding="async"><figcaption class="g-cap" data-edit id="t-g3">哇哦 wao · 未完待续</figcaption></figure>
+    </div>
+  </section>
+
+  <!-- 6 收款码 -->
+  <section class="page light" id="p-pay">
+    <div class="inner">
+      <div class="kicker" style="color:#b08d4f">SUPPORT</div>
+      <h2 class="h-sec" data-edit id="t-pay-title">心意通道</h2>
+      <div class="pay-card"><img data-img="qr" src="pay-wechat.jpg" alt="微信收款码" loading="lazy" decoding="async"></div>
       <p class="pay-note" data-edit id="t-pay-note">长按或扫一扫 · 心意直达 · 感谢每一份支持</p>
     </div>
   </section>
 
-  <!-- 6 结尾 -->
-  <section class="page" id="p-end">
+  <!-- 7 结尾 -->
+  <section class="page dark" id="p-end">
     <div class="inner">
-      <div class="sec-kicker">SEE YOU</div>
+      <div class="kicker">SEE YOU</div>
       <div class="end-line" data-edit id="t-end">恭候光临<br>不见不散</div>
-      <div class="divider"></div>
-      <div class="end-sign" data-edit id="t-sign">男嘉宾 &amp; 女嘉宾 敬邀<br>2026年10月</div>
+      <div class="end-sign" data-edit id="t-sign">男嘉宾 &amp; 哇哦 wao 敬邀<br>2026年10月</div>
     </div>
   </section>
 
 </main>
 
 <div id="dots"></div>
-<div id="editTip">编辑模式：点击任意文字直接修改；下方按钮可更换图片与音乐，改完自动保存</div>
+<div id="editTip">编辑模式：点击文字直接修改；下方按钮换图 / 换音乐，改完自动保存</div>
 <button id="editBtn">✎ 编辑</button>
 <div id="editBar">
-  <button data-rep="hero">换背景海报</button>
-  <button data-rep="male">换男嘉宾头像</button>
-  <button data-rep="female">换女嘉宾头像</button>
+  <button data-rep="hero">换背景</button>
+  <button data-rep="male">换男嘉宾</button>
+  <button data-rep="female">换女嘉宾</button>
+  <button data-rep="roomavatar">换直播间头像</button>
+  <button data-rep="live1">换照片1</button>
+  <button data-rep="live2">换照片2</button>
   <button data-rep="qr">换收款码</button>
   <button id="musicUp">换音乐</button>
   <button id="resetBtn">重置</button>
@@ -254,15 +298,15 @@
 <script>
 (function(){
   "use strict";
-  var KEY = "invite20_v1";
-  var state = { texts:{}, imgs:{}, music:null };
-  try{ var raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
-  function persist(){
-    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
-    catch(e){ /* 超出配额：仅本次会话生效 */ }
-  }
+  /* ---------- 触感反馈（Android/微信安卓端有效，iOS 系统不支持网页震动） ---------- */
+  function buzz(ms){ try{ if(navigator.vibrate) navigator.vibrate(ms); }catch(e){} }
 
-  /* ---------- 恢复已保存内容 ---------- */
+  /* ---------- 状态 ---------- */
+  var KEY = "invite20_v2";
+  var state = { texts:{}, imgs:{} };
+  try{ var raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
+  function persist(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
   document.querySelectorAll("[data-edit]").forEach(function(el){
     if(state.texts[el.id] != null) el.innerHTML = state.texts[el.id];
   });
@@ -272,13 +316,10 @@
     if(el.tagName === "IMG") el.src = state.imgs[name];
     else el.style.backgroundImage = 'url("'+state.imgs[name]+'")';
   }
-  ["hero","male","female","qr"].forEach(applyImg);
+  ["hero","male","female","roomavatar","live1","live2","female2","qr"].forEach(applyImg);
 
-  /* ---------- 文字编辑 ---------- */
   document.querySelectorAll("[data-edit]").forEach(function(el){
-    el.addEventListener("input", function(){
-      state.texts[el.id] = el.innerHTML; persist();
-    });
+    el.addEventListener("input", function(){ state.texts[el.id] = el.innerHTML; persist(); });
   });
 
   /* ---------- 编辑模式 ---------- */
@@ -286,15 +327,13 @@
   function setEditing(on){
     document.body.classList.toggle("editing", on);
     document.querySelectorAll("[data-edit]").forEach(function(el){ el.contentEditable = on ? "true" : "false"; });
-    editBtn.style.display = on ? "none" : "";
   }
-  editBtn.addEventListener("click", function(){ setEditing(true); });
-  document.getElementById("doneBtn").addEventListener("click", function(){ setEditing(false); });
+  editBtn.addEventListener("click", function(){ buzz(8); setEditing(true); });
+  document.getElementById("doneBtn").addEventListener("click", function(){ buzz(8); setEditing(false); });
 
-  /* ---------- 图片替换（压缩后保存） ---------- */
   var imgInput = document.getElementById("imgInput"), repTarget = null;
   document.querySelectorAll("#editBar [data-rep]").forEach(function(b){
-    b.addEventListener("click", function(){ repTarget = b.getAttribute("data-rep"); imgInput.click(); });
+    b.addEventListener("click", function(){ buzz(6); repTarget = b.getAttribute("data-rep"); imgInput.click(); });
   });
   function compress(file, max, q){
     return new Promise(function(res, rej){
@@ -302,9 +341,9 @@
       fr.onload = function(){
         var img = new Image();
         img.onload = function(){
-          var w = img.width, h = img.height, s = Math.min(1, max/Math.max(w,h));
+          var s = Math.min(1, max/Math.max(img.width, img.height));
           var c = document.createElement("canvas");
-          c.width = Math.round(w*s); c.height = Math.round(h*s);
+          c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
           c.getContext("2d").drawImage(img,0,0,c.width,c.height);
           res(c.toDataURL("image/jpeg", q));
         };
@@ -320,24 +359,31 @@
     }).catch(function(){ alert("图片读取失败，请换一张试试"); });
     imgInput.value = "";
   });
-
-  /* ---------- 重置 ---------- */
   document.getElementById("resetBtn").addEventListener("click", function(){
     if(!confirm("清除全部修改，恢复模板默认内容？")) return;
     localStorage.removeItem(KEY); location.reload();
   });
 
-  /* ---------- 背景音乐（内置合成 + 可换 mp3） ---------- */
+  /* ---------- 页内跳转 ---------- */
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){
+      buzz(6);
+      var t = document.getElementById(b.getAttribute("data-goto"));
+      if(t) t.scrollIntoView({behavior:"smooth"});
+    });
+  });
+
+  /* ---------- 音乐：自动播放尝试 + 微信桥接 + 手势兜底 ---------- */
   var ctx = null, customAudio = null, playing = false, loopTimer = null;
   var musicBtn = document.getElementById("musicBtn");
   var audioInput = document.getElementById("audioInput");
   document.getElementById("musicUp").addEventListener("click", function(){ audioInput.click(); });
   audioInput.addEventListener("change", function(){
     var f = audioInput.files[0]; if(!f) return;
-    if(customAudio){ customAudio.pause(); }
+    if(customAudio) customAudio.pause();
     customAudio = new Audio(URL.createObjectURL(f));
     customAudio.loop = true;
-    if(playing){ stopSynth(); customAudio.play(); }
+    if(playing){ stopSynth(); customAudio.play().catch(function(){}); }
     audioInput.value = "";
   });
   function midi(m){ return 440*Math.pow(2,(m-69)/12); }
@@ -345,14 +391,13 @@
     var o = ctx.createOscillator(), g = ctx.createGain();
     o.type = "sine"; o.frequency.value = freq;
     var o2 = ctx.createOscillator(), g2 = ctx.createGain();
-    o2.type = "triangle"; o2.frequency.value = freq*2; g2.gain.value = 0.18;
+    o2.type = "triangle"; o2.frequency.value = freq*2; g2.gain.value = 0.16;
     g.gain.setValueAtTime(0, t);
     g.gain.linearRampToValueAtTime(vol, t+0.02);
     g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
     o.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctx.destination);
     o.start(t); o.stop(t+dur); o2.start(t); o2.stop(t+dur);
   }
-  /* Cmaj7 - Am7 - Fmaj7 - G 琶音循环，简约钢琴感 */
   var CHORDS = [[60,64,67,71],[57,60,64,67],[53,57,60,65],[55,59,62,67]];
   var PAT = [0,1,2,3,2,1,0,2];
   function scheduleLoop(){
@@ -367,40 +412,55 @@
     loopTimer = setTimeout(scheduleLoop, CHORDS.length*bar*1000 - 120);
   }
   function stopSynth(){ clearTimeout(loopTimer); loopTimer = null; }
-  function toggleMusic(){
-    playing = !playing;
-    musicBtn.classList.toggle("playing", playing);
-    if(playing){
-      if(customAudio){ customAudio.play(); }
-      else{
-        if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)();
-        if(ctx.state === "suspended") ctx.resume();
-        scheduleLoop();
-      }
-    }else{
-      if(customAudio) customAudio.pause();
-      stopSynth();
-    }
+  function startMusic(){
+    if(playing) return;
+    playing = true;
+    musicBtn.classList.add("playing");
+    if(customAudio){ customAudio.play().catch(waitGesture); return; }
+    if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)();
+    if(ctx.state === "suspended"){
+      ctx.resume().then(function(){ scheduleLoop(); }).catch(function(){ playing=false; musicBtn.classList.remove("playing"); waitGesture(); });
+    } else scheduleLoop();
   }
-  musicBtn.addEventListener("click", toggleMusic);
+  function stopMusic(){
+    playing = false;
+    musicBtn.classList.remove("playing");
+    if(customAudio) customAudio.pause();
+    stopSynth();
+  }
+  musicBtn.addEventListener("click", function(){ buzz(10); playing ? stopMusic() : startMusic(); });
+  /* 自动播放：微信内置浏览器桥接就绪即播；普通浏览器被拦截时等首次触摸 */
+  var gestured = false;
+  function waitGesture(){
+    if(gestured) return; gestured = true;
+    var h = function(){ document.removeEventListener("pointerdown",h); document.removeEventListener("touchend",h); startMusic(); };
+    document.addEventListener("pointerdown", h, {once:true});
+    document.addEventListener("touchend", h, {once:true});
+  }
+  document.addEventListener("WeixinJSBridgeReady", function(){ startMusic(); });
+  window.addEventListener("load", function(){ startMusic(); if(!playing) waitGesture(); });
 
-  /* ---------- 滚动进场 + 圆点导航 ---------- */
+  /* ---------- 滚动进场 + 圆点 + 触感 ---------- */
   var pages = Array.prototype.slice.call(document.querySelectorAll(".page"));
   var dots = document.getElementById("dots");
   pages.forEach(function(p, i){
     var b = document.createElement("button");
-    b.addEventListener("click", function(){ p.scrollIntoView({behavior:"smooth"}); });
+    b.addEventListener("click", function(){ buzz(6); p.scrollIntoView({behavior:"smooth"}); });
     dots.appendChild(b);
   });
+  var lastIdx = -1;
   var io = new IntersectionObserver(function(es){
     es.forEach(function(en){
-      if(en.isIntersecting){
-        en.target.classList.add("in-view");
-        var i = pages.indexOf(en.target);
+      if(!en.isIntersecting) return;
+      en.target.classList.add("in-view");
+      var i = pages.indexOf(en.target);
+      if(i !== lastIdx){
+        lastIdx = i;
+        buzz(9);
         dots.querySelectorAll("button").forEach(function(d, j){ d.classList.toggle("on", j===i); });
       }
     });
-  }, { threshold: 0.35 });
+  }, { threshold: 0.4 });
   pages.forEach(function(p){ io.observe(p); });
 })();
 </script>
