@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>灯牌20级 · 荣耀之夜 | 电子邀请函</title>
+<style>
+  :root{
+    --bg:#000;
+    --panel:#0b0b0d;
+    --ink:#f5f5f7;
+    --ink-dim:#86868b;
+    --gold:#d8b26a;
+    --gold-2:#f4e3bd;
+    --line:rgba(255,255,255,.12);
+    --font:-apple-system,BlinkMacSystemFont,"SF Pro SC","SF Pro Display","PingFang SC","Helvetica Neue","Microsoft YaHei",sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{height:100%}
+  body{
+    background:var(--bg);color:var(--ink);font-family:var(--font);
+    -webkit-font-smoothing:antialiased;overflow:hidden;
+  }
+  /* ---------- 顶栏（苹果式毛玻璃） ---------- */
+  #topnav{
+    position:fixed;top:0;left:0;right:0;z-index:50;height:52px;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 22px;background:rgba(0,0,0,.55);backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(255,255,255,.08);
+  }
+  #topnav .brand{font-size:13px;letter-spacing:.35em;color:var(--ink-dim);font-weight:600}
+  #musicBtn{
+    width:34px;height:34px;border-radius:50%;border:1px solid var(--line);
+    background:rgba(255,255,255,.06);color:var(--ink);font-size:15px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;transition:.3s;
+  }
+  #musicBtn.playing{border-color:var(--gold);color:var(--gold);animation:spin 6s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* ---------- 页面滚动结构 ---------- */
+  #scroller{height:100dvh;overflow-y:auto;scroll-snap-type:y proximity;scroll-behavior:smooth}
+  #scroller::-webkit-scrollbar{width:0}
+  .page{
+    min-height:100dvh;scroll-snap-align:start;position:relative;
+    display:flex;align-items:center;justify-content:center;padding:80px 24px 60px;
+  }
+  .inner{width:100%;max-width:760px;text-align:center;opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform .9s ease}
+  .page.in-view .inner{opacity:1;transform:none}
+  /* ---------- 封面海报 ---------- */
+  #p-hero{padding:0;overflow:hidden}
+  #p-hero .hero-bg{
+    position:absolute;inset:0;background:url("hero.png") center/cover no-repeat;
+  }
+  #p-hero .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25),rgba(0,0,0,.05) 40%,rgba(0,0,0,.85))}
+  #p-hero .inner{position:relative;z-index:2;max-width:680px;padding:0 24px}
+  .kicker{font-size:13px;letter-spacing:.5em;color:var(--gold);font-weight:600;margin-bottom:18px;text-indent:.5em}
+  .big-num{
+    font-size:clamp(96px,22vw,190px);font-weight:700;line-height:1;letter-spacing:-.02em;
+    background:linear-gradient(180deg,var(--gold-2),var(--gold) 60%,#8a6a33);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 6px 30px rgba(216,178,106,.25));
+  }
+  .hero-title{font-size:clamp(26px,6vw,44px);font-weight:600;letter-spacing:.12em;margin-top:14px}
+  .hero-sub{margin-top:14px;font-size:clamp(14px,3.4vw,17px);color:var(--ink-dim);letter-spacing:.3em;text-indent:.3em}
+  .hero-date{
+    display:inline-block;margin-top:34px;padding:10px 26px;border:1px solid rgba(216,178,106,.5);
+    border-radius:999px;font-size:14px;letter-spacing:.18em;color:var(--gold-2);
+  }
+  .scroll-hint{
+    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;
+    font-size:12px;letter-spacing:.3em;color:var(--ink-dim);animation:float 2.4s ease-in-out infinite;
+  }
+  @keyframes float{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,8px)}}
+  /* ---------- 通用排版 ---------- */
+  .sec-kicker{font-size:12px;letter-spacing:.5em;color:var(--gold);font-weight:600;margin-bottom:16px;text-indent:.5em}
+  .sec-title{font-size:clamp(28px,6.5vw,46px);font-weight:600;letter-spacing:.06em;margin-bottom:26px}
+  .letter{font-size:clamp(15px,3.8vw,18px);line-height:2.1;color:#d2d2d7;text-align:justify;text-align-last:center}
+  .letter b{color:var(--gold-2);font-weight:600}
+  .divider{width:44px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:30px auto}
+  /* ---------- 嘉宾 ---------- */
+  .people{display:flex;justify-content:center;gap:clamp(30px,9vw,90px);flex-wrap:wrap}
+  .person{width:min(40vw,220px)}
+  .avatar-wrap{position:relative;width:min(40vw,180px);aspect-ratio:1;margin:0 auto}
+  .avatar-wrap::before{
+    content:"";position:absolute;inset:-6px;border-radius:50%;
+    background:conic-gradient(from 0deg,var(--gold),transparent 30%,var(--gold) 55%,transparent 85%,var(--gold));
+    opacity:.7;animation:spin 9s linear infinite;
+  }
+  .avatar{position:relative;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#111;display:block}
+  .p-name{margin-top:20px;font-size:clamp(18px,4.5vw,22px);font-weight:600;letter-spacing:.1em}
+  .p-role{margin-top:8px;font-size:13px;color:var(--ink-dim);letter-spacing:.2em}
+  .amp{align-self:center;font-size:clamp(24px,6vw,36px);color:var(--gold);font-weight:300;font-style:italic}
+  /* ---------- 活动信息 ---------- */
+  .info-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:24px;
+    padding:clamp(26px,6vw,44px);text-align:left;
+  }
+  .info-row{display:flex;gap:18px;padding:16px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:clamp(14px,3.6vw,16px)}
+  .info-row:last-child{border-bottom:none}
+  .info-k{flex:0 0 74px;color:var(--gold);letter-spacing:.2em;font-weight:600}
+  .info-v{color:#d2d2d7;line-height:1.8}
+  /* ---------- 收款码 ---------- */
+  .pay-card{
+    display:inline-block;background:#fff;border-radius:24px;padding:clamp(20px,5vw,32px);
+    box-shadow:0 20px 60px rgba(0,0,0,.6);
+  }
+  .pay-card img{width:min(64vw,260px);border-radius:12px;display:block}
+  .pay-note{margin-top:22px;font-size:13px;color:var(--ink-dim);letter-spacing:.2em}
+  /* ---------- 结尾 ---------- */
+  .end-line{font-size:clamp(24px,6vw,40px);font-weight:600;letter-spacing:.2em;line-height:1.8}
+  .end-sign{margin-top:28px;font-size:14px;color:var(--ink-dim);letter-spacing:.25em;line-height:2.2}
+  /* ---------- 侧边圆点导航 ---------- */
+  #dots{position:fixed;right:14px;top:50%;transform:translateY(-50%);z-index:40;display:flex;flex-direction:column;gap:12px}
+  #dots button{width:7px;height:7px;border-radius:50%;border:none;background:rgba(255,255,255,.25);cursor:pointer;padding:0;transition:.3s}
+  #dots button.on{background:var(--gold);transform:scale(1.5)}
+  /* ---------- 编辑系统 ---------- */
+  #editBtn{
+    position:fixed;right:18px;bottom:22px;z-index:60;height:40px;padding:0 20px;border-radius:999px;
+    border:1px solid var(--line);background:rgba(20,20,22,.8);backdrop-filter:blur(12px);
+    color:var(--ink);font-size:14px;letter-spacing:.15em;cursor:pointer;font-family:var(--font);
+  }
+  #editBar{
+    position:fixed;left:0;right:0;bottom:0;z-index:60;display:none;
+    padding:14px 16px calc(14px + env(safe-area-inset-bottom));
+    background:rgba(12,12,14,.92);backdrop-filter:blur(20px);border-top:1px solid var(--line);
+    gap:8px;flex-wrap:wrap;justify-content:center;
+  }
+  body.editing #editBar{display:flex}
+  body.editing #editBtn{bottom:auto;top:62px}
+  #editBar button{
+    height:36px;padding:0 16px;border-radius:999px;border:1px solid var(--line);
+    background:rgba(255,255,255,.07);color:var(--ink);font-size:13px;cursor:pointer;font-family:var(--font);
+  }
+  #editBar button.primary{border-color:var(--gold);color:var(--gold)}
+  body.editing [data-edit]{outline:1px dashed rgba(216,178,106,.45);outline-offset:4px;border-radius:4px;cursor:text}
+  body.editing [data-edit]:focus{outline:1px solid var(--gold);background:rgba(216,178,106,.06)}
+  #editTip{
+    position:fixed;top:62px;left:50%;transform:translateX(-50%);z-index:60;display:none;
+    background:rgba(216,178,106,.14);border:1px solid rgba(216,178,106,.4);color:var(--gold-2);
+    font-size:12px;letter-spacing:.1em;padding:8px 18px;border-radius:999px;backdrop-filter:blur(10px);
+    max-width:86vw;text-align:center;
+  }
+  body.editing #editTip{display:block}
+  @media (max-width:520px){ #dots{right:8px} }
+</style>
+</head>
+<body>
+
+<nav id="topnav">
+  <div class="brand">GLORY&nbsp;NIGHT&nbsp;·&nbsp;20</div>
+  <button id="musicBtn" title="播放 / 暂停音乐">♪</button>
+</nav>
+
+<main id="scroller">
+
+  <!-- 1 封面海报 -->
+  <section class="page" id="p-hero">
+    <div class="hero-bg" data-img="hero"></div>
+    <div class="inner">
+      <div class="kicker" data-edit id="t-kicker">抖音直播 · 粉丝灯牌</div>
+      <div class="big-num" data-edit id="t-num">20</div>
+      <h1 class="hero-title" data-edit id="t-title">荣耀之夜 · 庆功邀请函</h1>
+      <p class="hero-sub" data-edit id="t-sub">一路相伴 · 星光为证</p>
+      <div><span class="hero-date" data-edit id="t-date">2026年10月24日 20:00</span></div>
+    </div>
+    <div class="scroll-hint">上滑开启</div>
+  </section>
+
+  <!-- 2 邀请函 -->
+  <section class="page" id="p-letter">
+    <div class="inner">
+      <div class="sec-kicker">INVITATION</div>
+      <h2 class="sec-title" data-edit id="t-letter-title">诚邀见证</h2>
+      <p class="letter" data-edit id="t-letter">从直播间里第一次点亮灯牌，到今夜数字停格在 <b>20</b>。<br>
+      每一级灯牌，都是一次准时的守候、一句没说出口的陪伴。<br>
+      大哥与主播，屏幕两端，彼此成全。<br>
+      值此灯牌升至 20 级之际，特设庆功之夜，<br>
+      诚邀各位家人朋友，共同见证这份荣耀时刻。</p>
+      <div class="divider"></div>
+    </div>
+  </section>
+
+  <!-- 3 嘉宾 -->
+  <section class="page" id="p-people">
+    <div class="inner">
+      <div class="sec-kicker">TONIGHT'S STARS</div>
+      <h2 class="sec-title">今晚的主角</h2>
+      <div class="people">
+        <div class="person">
+          <div class="avatar-wrap"><img class="avatar" data-img="male" src="male.jpg" alt="男嘉宾"></div>
+          <div class="p-name" data-edit id="t-male-name">男嘉宾</div>
+          <div class="p-role" data-edit id="t-male-role">直播间首席守护 · 灯牌20级</div>
+        </div>
+        <div class="amp">&amp;</div>
+        <div class="person">
+          <div class="avatar-wrap"><img class="avatar" data-img="female" src="female.jpg" alt="女嘉宾"></div>
+          <div class="p-name" data-edit id="t-female-name">女嘉宾</div>
+          <div class="p-role" data-edit id="t-female-role">抖音主播</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 活动信息 -->
+  <section class="page" id="p-info">
+    <div class="inner">
+      <div class="sec-kicker">DETAILS</div>
+      <h2 class="sec-title">活动信息</h2>
+      <div class="info-card">
+        <div class="info-row"><div class="info-k">时间</div><div class="info-v" data-edit id="t-i-time">2026年10月24日（周六）20:00 — 23:00</div></div>
+        <div class="info-row"><div class="info-k">地点</div><div class="info-v" data-edit id="t-i-place">抖音直播间 · 房间号 0000000</div></div>
+        <div class="info-row"><div class="info-k">流程</div><div class="info-v" data-edit id="t-i-flow">20:00 开场暖场<br>20:30 灯牌20级点亮仪式<br>21:00 连麦互动 · 才艺环节<br>22:00 抽奖与答谢<br>22:40 合影留念 · 圆满收官</div></div>
+        <div class="info-row"><div class="info-k">备注</div><div class="info-v" data-edit id="t-i-note">线上活动，点击进入直播间即可参与；欢迎转发邀请更多家人。</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 收款码 -->
+  <section class="page" id="p-pay">
+    <div class="inner">
+      <div class="sec-kicker">SUPPORT</div>
+      <h2 class="sec-title" data-edit id="t-pay-title">心意通道</h2>
+      <div class="pay-card"><img data-img="qr" src="pay-wechat.jpg" alt="微信收款码"></div>
+      <p class="pay-note" data-edit id="t-pay-note">长按或扫一扫 · 心意直达 · 感谢每一份支持</p>
+    </div>
+  </section>
+
+  <!-- 6 结尾 -->
+  <section class="page" id="p-end">
+    <div class="inner">
+      <div class="sec-kicker">SEE YOU</div>
+      <div class="end-line" data-edit id="t-end">恭候光临<br>不见不散</div>
+      <div class="divider"></div>
+      <div class="end-sign" data-edit id="t-sign">男嘉宾 &amp; 女嘉宾 敬邀<br>2026年10月</div>
+    </div>
+  </section>
+
+</main>
+
+<div id="dots"></div>
+<div id="editTip">编辑模式：点击任意文字直接修改；下方按钮可更换图片与音乐，改完自动保存</div>
+<button id="editBtn">✎ 编辑</button>
+<div id="editBar">
+  <button data-rep="hero">换背景海报</button>
+  <button data-rep="male">换男嘉宾头像</button>
+  <button data-rep="female">换女嘉宾头像</button>
+  <button data-rep="qr">换收款码</button>
+  <button id="musicUp">换音乐</button>
+  <button id="resetBtn">重置</button>
+  <button class="primary" id="doneBtn">完成</button>
+</div>
+<input type="file" id="imgInput" accept="image/*" hidden>
+<input type="file" id="audioInput" accept="audio/*" hidden>
+
+<script>
+(function(){
+  "use strict";
+  var KEY = "invite20_v1";
+  var state = { texts:{}, imgs:{}, music:null };
+  try{ var raw = localStorage.getItem(KEY); if(raw) state = Object.assign(state, JSON.parse(raw)); }catch(e){}
+  function persist(){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+    catch(e){ /* 超出配额：仅本次会话生效 */ }
+  }
+
+  /* ---------- 恢复已保存内容 ---------- */
+  document.querySelectorAll("[data-edit]").forEach(function(el){
+    if(state.texts[el.id] != null) el.innerHTML = state.texts[el.id];
+  });
+  function applyImg(name){
+    var el = document.querySelector('[data-img="'+name+'"]');
+    if(!el || !state.imgs[name]) return;
+    if(el.tagName === "IMG") el.src = state.imgs[name];
+    else el.style.backgroundImage = 'url("'+state.imgs[name]+'")';
+  }
+  ["hero","male","female","qr"].forEach(applyImg);
+
+  /* ---------- 文字编辑 ---------- */
+  document.querySelectorAll("[data-edit]").forEach(function(el){
+    el.addEventListener("input", function(){
+      state.texts[el.id] = el.innerHTML; persist();
+    });
+  });
+
+  /* ---------- 编辑模式 ---------- */
+  var editBtn = document.getElementById("editBtn");
+  function setEditing(on){
+    document.body.classList.toggle("editing", on);
+    document.querySelectorAll("[data-edit]").forEach(function(el){ el.contentEditable = on ? "true" : "false"; });
+    editBtn.style.display = on ? "none" : "";
+  }
+  editBtn.addEventListener("click", function(){ setEditing(true); });
+  document.getElementById("doneBtn").addEventListener("click", function(){ setEditing(false); });
+
+  /* ---------- 图片替换（压缩后保存） ---------- */
+  var imgInput = document.getElementById("imgInput"), repTarget = null;
+  document.querySelectorAll("#editBar [data-rep]").forEach(function(b){
+    b.addEventListener("click", function(){ repTarget = b.getAttribute("data-rep"); imgInput.click(); });
+  });
+  function compress(file, max, q){
+    return new Promise(function(res, rej){
+      var fr = new FileReader();
+      fr.onload = function(){
+        var img = new Image();
+        img.onload = function(){
+          var w = img.width, h = img.height, s = Math.min(1, max/Math.max(w,h));
+          var c = document.createElement("canvas");
+          c.width = Math.round(w*s); c.height = Math.round(h*s);
+          c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+          res(c.toDataURL("image/jpeg", q));
+        };
+        img.onerror = rej; img.src = fr.result;
+      };
+      fr.onerror = rej; fr.readAsDataURL(file);
+    });
+  }
+  imgInput.addEventListener("change", function(){
+    var f = imgInput.files[0]; if(!f || !repTarget) return;
+    compress(f, 1400, 0.85).then(function(url){
+      state.imgs[repTarget] = url; persist(); applyImg(repTarget);
+    }).catch(function(){ alert("图片读取失败，请换一张试试"); });
+    imgInput.value = "";
+  });
+
+  /* ---------- 重置 ---------- */
+  document.getElementById("resetBtn").addEventListener("click", function(){
+    if(!confirm("清除全部修改，恢复模板默认内容？")) return;
+    localStorage.removeItem(KEY); location.reload();
+  });
+
+  /* ---------- 背景音乐（内置合成 + 可换 mp3） ---------- */
+  var ctx = null, customAudio = null, playing = false, loopTimer = null;
+  var musicBtn = document.getElementById("musicBtn");
+  var audioInput = document.getElementById("audioInput");
+  document.getElementById("musicUp").addEventListener("click", function(){ audioInput.click(); });
+  audioInput.addEventListener("change", function(){
+    var f = audioInput.files[0]; if(!f) return;
+    if(customAudio){ customAudio.pause(); }
+    customAudio = new Audio(URL.createObjectURL(f));
+    customAudio.loop = true;
+    if(playing){ stopSynth(); customAudio.play(); }
+    audioInput.value = "";
+  });
+  function midi(m){ return 440*Math.pow(2,(m-69)/12); }
+  function note(freq, t, dur, vol){
+    var o = ctx.createOscillator(), g = ctx.createGain();
+    o.type = "sine"; o.frequency.value = freq;
+    var o2 = ctx.createOscillator(), g2 = ctx.createGain();
+    o2.type = "triangle"; o2.frequency.value = freq*2; g2.gain.value = 0.18;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(vol, t+0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t+dur);
+    o.connect(g); o2.connect(g2); g2.connect(g); g.connect(ctx.destination);
+    o.start(t); o.stop(t+dur); o2.start(t); o2.stop(t+dur);
+  }
+  /* Cmaj7 - Am7 - Fmaj7 - G 琶音循环，简约钢琴感 */
+  var CHORDS = [[60,64,67,71],[57,60,64,67],[53,57,60,65],[55,59,62,67]];
+  var PAT = [0,1,2,3,2,1,0,2];
+  function scheduleLoop(){
+    if(!playing) return;
+    var t0 = ctx.currentTime + 0.06, eighth = 0.42, bar = eighth*8;
+    CHORDS.forEach(function(ch, bi){
+      var bt = t0 + bi*bar;
+      note(midi(ch[0]-12), bt, bar*0.95, 0.10);
+      PAT.forEach(function(ix, i){ note(midi(ch[ix]), bt + i*eighth, 1.5, 0.16); });
+      note(midi(ch[3]+12), bt + bar/2, 2.2, 0.07);
+    });
+    loopTimer = setTimeout(scheduleLoop, CHORDS.length*bar*1000 - 120);
+  }
+  function stopSynth(){ clearTimeout(loopTimer); loopTimer = null; }
+  function toggleMusic(){
+    playing = !playing;
+    musicBtn.classList.toggle("playing", playing);
+    if(playing){
+      if(customAudio){ customAudio.play(); }
+      else{
+        if(!ctx) ctx = new (window.AudioContext||window.webkitAudioContext)();
+        if(ctx.state === "suspended") ctx.resume();
+        scheduleLoop();
+      }
+    }else{
+      if(customAudio) customAudio.pause();
+      stopSynth();
+    }
+  }
+  musicBtn.addEventListener("click", toggleMusic);
+
+  /* ---------- 滚动进场 + 圆点导航 ---------- */
+  var pages = Array.prototype.slice.call(document.querySelectorAll(".page"));
+  var dots = document.getElementById("dots");
+  pages.forEach(function(p, i){
+    var b = document.createElement("button");
+    b.addEventListener("click", function(){ p.scrollIntoView({behavior:"smooth"}); });
+    dots.appendChild(b);
+  });
+  var io = new IntersectionObserver(function(es){
+    es.forEach(function(en){
+      if(en.isIntersecting){
+        en.target.classList.add("in-view");
+        var i = pages.indexOf(en.target);
+        dots.querySelectorAll("button").forEach(function(d, j){ d.classList.toggle("on", j===i); });
+      }
+    });
+  }, { threshold: 0.35 });
+  pages.forEach(function(p){ io.observe(p); });
+})();
+</script>
+</body>
+</html>
